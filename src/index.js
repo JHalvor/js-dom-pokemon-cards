@@ -21,18 +21,37 @@ function renderCard(cardData) {
     img.src = cardData.sprites.other["official-artwork"].front_default
     img.alt = cardData.name
 
-    const ulText = document.createElement("ul")
-    ulText.className = "card--text"
+    const ulList = document.createElement("ul")
+    ulList.className = "horizontal-list"
+
+    const liStats = document.createElement("li")
+    liStats.className = "card--text"
 
     cardData.stats.forEach((element) => {
-        const ulStat = document.createElement("ul")
-        ulStat.textContent = element.stat.name.toUpperCase() + ': ' + element.base_stat
-        ulText.appendChild(ulStat)
+        const liStat = document.createElement("li")
+        liStat.textContent = element.stat.name.toUpperCase() + ': ' + element.base_stat
+        liStats.appendChild(liStat)
     });
+
+    const appearedGames = document.createElement("li")
+    for (const version in cardData.sprites.versions) {
+        for (const game in cardData.sprites.versions[version]) {
+            if (game !== "icons") {
+                const ulGame = document.createElement("ul")
+                ulGame.textContent = game.toUpperCase()
+                appearedGames.appendChild(ulGame)
+            }
+        }
+    }
+
+
 
     ul.appendChild(h2)
     ul.appendChild(img)
-    ul.appendChild(ulText)
+    ulList.appendChild(liStats)
+    ulList.appendChild(appearedGames)
+    ul.appendChild(ulList)
+    //ul.appendChild(ulStats)
 
     return ul
 }
