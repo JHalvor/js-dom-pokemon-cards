@@ -8,12 +8,10 @@ console.log(data[0]);
 const cardList = document.querySelector(".cards")
 
 function renderCard(cardData) {
-    const li = document.createElement("li")
-    //li.setAttribute("class", "card")
-    li.className = "card"
+    const ul = document.createElement("ul")
+    ul.className = "card"
 
     const h2 = document.createElement("h2")
-    //h2.setAttribute("class", "card--title")
     h2.className = "card--title"
     h2.textContent = cardData.name.charAt(0).toUpperCase() + cardData.name.slice(1)
 
@@ -23,19 +21,22 @@ function renderCard(cardData) {
     img.src = cardData.sprites.other["official-artwork"].front_default
     img.alt = cardData.name
 
-    const ul = document.createElement("ul")
-    ul.className = "card--text"
-    const liHp = document.createElement("li")
-    const statFound = cardData.stats.find((item) => item.stat.name === "hp")
-    liHp.textContent = statFound.stat.name + ': ' + statFound.base_stat
+    const ulText = document.createElement("ul")
+    ulText.className = "card--text"
 
-    ul.appendChild(liHp)
+    cardData.stats.forEach((element) => {
+        const ulStat = document.createElement("ul")
+        ulStat.textContent = element.stat.name.toUpperCase() + ': ' + element.base_stat
+        ulText.appendChild(ulStat)
+    });
 
-    li.appendChild(h2)
-    li.appendChild(img)
-    li.appendChild(ul)
+    ul.appendChild(h2)
+    ul.appendChild(img)
+    ul.appendChild(ulText)
 
-    return li
+    return ul
 }
 
-cardList.appendChild(renderCard(data[0]))
+data.forEach((element) => {
+    cardList.appendChild(renderCard(element))
+})
