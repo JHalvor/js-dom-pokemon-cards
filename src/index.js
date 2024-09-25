@@ -5,57 +5,91 @@ console.log(data);
 //pokemon card from the first element
 console.log(data[0]);
 
-const cardList = document.querySelector(".cards")
+function renderCards() {
+    const parent = document.getElementsByClassName("cards")[0];
 
-function renderCard(cardData) {
-    const ul = document.createElement("ul")
-    ul.className = "card"
+    data.forEach((e) => {
+        const card = createCard(e);
+        parent.appendChild(card);
+    });
 
-    const h2 = document.createElement("h2")
-    h2.className = "card--title"
-    h2.textContent = cardData.name.charAt(0).toUpperCase() + cardData.name.slice(1)
+}
 
-    const img = document.createElement("img");
-    img.width = "256"
-    img.className = "card--img"
-    img.src = cardData.sprites.other["official-artwork"].front_default
-    img.alt = cardData.name
+function createCard(data){
+    const card = document.createElement("li");
+
+    const { name, sprites: { other: {'official-artwork': { front_default }}, versions }, stats } = data;
+
+    console.log(versions)
+    card.classList.add("card");
+    card.appendChild(renderName(name))
+    card.appendChild(renderImage(front_default))
 
     const ulList = document.createElement("ul")
     ulList.className = "horizontal-list"
 
-    const liStats = document.createElement("li")
-    liStats.className = "card--text"
+    ulList.appendChild(renderStats(stats));
+    ulList.appendChild(renderGames(versions))
 
-    cardData.stats.forEach((element) => {
-        const liStat = document.createElement("li")
-        liStat.textContent = element.stat.name.toUpperCase() + ': ' + element.base_stat
-        liStats.appendChild(liStat)
-    });
+    card.appendChild(ulList)
+    return card;
+}
 
-    const appearedGames = document.createElement("li")
-    for (const version in cardData.sprites.versions) {
-        for (const game in cardData.sprites.versions[version]) {
-            if (game !== "icons") {
-                const ulGame = document.createElement("ul")
-                ulGame.textContent = game.toUpperCase()
-                appearedGames.appendChild(ulGame)
+function renderGames(versions) {
+    const ul = document.createElement("ul")
+    ul.classList.add("card--games")
+    for (const version in versions) {
+        for (const gameName in versions[version]) {
+            if (gameName !== "icons") {
+                ul.appendChild(createGameElement(gameName)) 
             }
         }
     }
 
+    return ul
+}
+
+function createGameElement(gameName) {
+    const element = document.createElement("li")
+
+    element.innerHTML = gameName.toUpperCase()
+    return element
+}
+
+function createStatElement(title, content) {
+    const element =  document.createElement('li')
+
+    element.innerHTML = `${title.toUpperCase()}: ${content}`
+    return element;
+}
 
 
-    ul.appendChild(h2)
-    ul.appendChild(img)
-    ulList.appendChild(liStats)
-    ulList.appendChild(appearedGames)
-    ul.appendChild(ulList)
-    //ul.appendChild(ulStats)
+function renderName(name) {
+    const captalize = name.charAt(0).toUpperCase().concat(name.slice(1))
+    const title = document.createElement("h2");
+    title.classList.add("card--title");
+    title.textContent = captalize;
+    return title;
+}
+
+
+function renderImage(url) {
+    const image = document.createElement("img");
+    image.classList.add("card--img");
+    image.setAttribute("src", url)
+    image.setAttribute("width", 256)
+    return image
+}
+
+function renderStats(stats){
+    const ul = document.createElement("ul");
+    ul.classList.add("card--text")
+    stats.forEach(e => {
+        ul.appendChild(createStatElement(e.stat.name, e.base_stat))
+    })
 
     return ul
 }
 
-data.forEach((element) => {
-    cardList.appendChild(renderCard(element))
-})
+
+renderCards()
